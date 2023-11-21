@@ -2,7 +2,7 @@
   <div>
     <h1>Register</h1>
     <form @submit.prevent="handleSubmit">
-      <label for="username">Email</label>
+      <label for="username">Username</label>
       <input
         id="username"
         type="text"
@@ -21,31 +21,27 @@
   </div>
 </template>
 
-<script lang="ts">
-import { Options, Vue } from "vue-class-component";
+<script setup lang="ts">
+import { ref } from "vue";
 import RegisterViewModel from "@/viewmodel/RegisterViewModel";
 import { User } from "@/model/user";
+import { onMounted } from "vue";
 
-@Options({
-  components: {},
-  data() {
-    return {
-      username: "",
-      password: "",
-      viewModel: new RegisterViewModel(), // Initialize the viewModel here
-    };
-  },
-  methods: {
-    handleSubmit() {
-      const userForRegister: User = {
-        username: this.username,
-        password: this.password,
-      } as User;
-      this.viewModel.RegisterUser(userForRegister);
-    },
-  },
-})
-export default class RegisterView extends Vue {}
+const username = ref("");
+const password = ref("");
+const viewModel = new RegisterViewModel();
+
+onMounted(() => {
+  console.log("RegisterView mounted");
+});
+
+const handleSubmit = () => {
+  const userForRegister: User = {
+    username: username.value,
+    password: password.value,
+  } as User;
+  viewModel.RegisterUser(userForRegister);
+};
 </script>
 
 <style>
