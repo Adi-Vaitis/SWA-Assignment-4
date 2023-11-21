@@ -2,12 +2,6 @@ import { User } from "@/model/user";
 import { Token } from "@/model/token";
 
 export class UserService {
-  static PATH: string;
-
-  private constructor() {
-    UserService.PATH = "http://localhost:9090";
-  }
-
   static async login(user: User) {
     const myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
@@ -21,7 +15,7 @@ export class UserService {
       redirect: "follow" as RequestRedirect,
     } as RequestInit;
 
-    return fetch(`${UserService.PATH}/login`, requestOptions);
+    return fetch(`http://localhost:9090/login`, requestOptions);
   }
 
   static async register(user: User) {
@@ -37,11 +31,11 @@ export class UserService {
       redirect: "follow",
     } as RequestInit;
 
-    return fetch(`${UserService.PATH}/users`, requestOptions);
+    return fetch(`http://localhost:9090/users`, requestOptions);
   }
 
   static async getUser(token: Token) {
-    const apiUrl = new URL(`${UserService.PATH}/users/${token.userId}`);
+    const apiUrl = new URL(`http://localhost:9090/users/${token.userId}`);
     if (token) {
       apiUrl.searchParams.append("token", token.token.token);
     }
@@ -62,7 +56,7 @@ export class UserService {
     token: Token,
     profileUpdates: { password?: string }
   ) {
-    const apiUrl = new URL(`${UserService.PATH}/users/${token.userId}`);
+    const apiUrl = new URL(`http://localhost:9090/users/${token.userId}`);
 
     if (token) {
       apiUrl.searchParams.append("token", token.token.token);

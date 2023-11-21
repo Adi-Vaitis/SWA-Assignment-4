@@ -2,14 +2,8 @@ import { Token } from "@/model/token";
 import { Game } from "@/model/game";
 
 export class GameService {
-  static API_URL: string;
-
-  private constructor() {
-    GameService.API_URL = "http://localhost:9090";
-  }
-
   static async getGame(token: Token, gameId: number) {
-    const apiUrl = new URL(`${GameService.API_URL}/games/${gameId}`);
+    const apiUrl = new URL(`http://localhost:9090/games/${gameId}`);
     if (token) {
       apiUrl.searchParams.append("token", token.token.token);
     }
@@ -27,7 +21,7 @@ export class GameService {
   }
 
   static async getGames(token: Token) {
-    const apiUrl = new URL(`${GameService.API_URL}/games`);
+    const apiUrl = new URL(`http://localhost:9090/games`);
     if (token) {
       apiUrl.searchParams.append("token", token.token.token);
     }
@@ -45,7 +39,7 @@ export class GameService {
   }
 
   static async createGame(token: Token) {
-    const apiUrl = new URL(`${GameService.API_URL}/games`);
+    const apiUrl = new URL(`http://localhost:9090/games`);
     if (token) {
       apiUrl.searchParams.append("token", token.token.token);
     }
@@ -69,7 +63,7 @@ export class GameService {
   ) {
     if (!gameId) throw new Error("gameId is undefined");
 
-    const apiUrl = new URL(`${GameService.API_URL}/games/${gameId}`);
+    const apiUrl = new URL(`http://localhost:9090/games/${gameId}`);
     if (token) {
       apiUrl.searchParams.append("token", token.token.token);
     }
