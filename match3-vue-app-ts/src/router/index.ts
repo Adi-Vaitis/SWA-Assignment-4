@@ -7,11 +7,17 @@ const routes: Array<RouteRecordRaw> = [
     path: "/",
     name: "home",
     component: HomeView,
+    meta: {
+      title: "Home",
+    },
   },
   {
     path: "/register",
     name: "Register",
     component: RegisterView,
+    meta: {
+      title: "Register",
+    },
   },
   // {
   //   path: "/about",
