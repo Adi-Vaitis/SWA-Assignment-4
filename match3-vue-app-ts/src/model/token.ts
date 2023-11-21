@@ -1,8 +1,8 @@
 export interface Token {
-    // userId
+  // userId
+  userId: number;
+  token: {
     userId: number;
-    token: {
-        userId: number;
-        token: string;
-    };
+    token: string;
+  };
 }
