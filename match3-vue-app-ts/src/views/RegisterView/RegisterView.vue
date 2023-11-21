@@ -21,26 +21,29 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import { ref } from "vue";
+<script>
 import RegisterViewModel from "@/viewmodel/RegisterViewModel";
-import { User } from "@/model/user";
-import { onMounted } from "vue";
 
-const username = ref("");
-const password = ref("");
-const viewModel = new RegisterViewModel();
-
-onMounted(() => {
-  console.log("RegisterView mounted");
-});
-
-const handleSubmit = () => {
-  const userForRegister: User = {
-    username: username.value,
-    password: password.value,
-  } as User;
-  viewModel.RegisterUser(userForRegister);
+export default {
+  data() {
+    return {
+      username: "",
+      password: "",
+      viewModel: new RegisterViewModel(),
+    };
+  },
+  beforeMount() {
+    console.log("RegisterView doing stuff before mount");
+  },
+  methods: {
+    handleSubmit() {
+      const userForRegister = {
+        username: this.username,
+        password: this.password,
+      };
+      this.viewModel.RegisterUser(userForRegister);
+    },
+  },
 };
 </script>
 
