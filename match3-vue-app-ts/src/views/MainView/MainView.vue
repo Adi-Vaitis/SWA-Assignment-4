@@ -1,43 +1,46 @@
 <template>
-  <h1 v-if="gameEndedWithNoMovesLeft">
-    Your game has ended because there were no moves left.
-  </h1>
-  <BoardComponent
-    v-if="gameId"
-    v-bind:game="{
-      isFetching: this.isFetching,
-      gameId: this.gameId,
-      board: this.board,
-      score: this.score,
-      maxMoveNumber: this.maxMoveNumber,
-      currentMoveNumber: this.currentMoveNumber,
-      completed: this.completed,
-      games: this.games,
-      movedItems: this.movedItems,
-      notFoundMatches: this.notFoundMatches,
-      gameEnded: this.gameEnded,
-      gameEndedWithNoMovesLeft: this.gameEndedWithNoMovesLeft,
-    }"
-    v-bind:reset-not-matches-found="resetNotMatchesFound"
-    v-bind:end-game-with-no-moves-left="endGameWithNoMovesLeft"
-    v-bind:update-move-on-board="updateMoveOnBoard"
-    v-bind:update-game="updateGame"
-  ></BoardComponent>
-  <div>
-    <button v-if="!gameId" @click="fetchInitialBoardGame">
-      Start new game
-    </button>
-    <button v-if="gameId && !gameEnded" @click="endGame">
-      End current game
-    </button>
+  <div class="main-view-container">
+    <h1 v-if="gameEndedWithNoMovesLeft">
+      Your game has ended because there were no moves left.
+    </h1>
+    <BoardComponent
+      v-if="gameId"
+      v-bind:game="{
+        isFetching: this.isFetching,
+        gameId: this.gameId,
+        board: this.board,
+        score: this.score,
+        maxMoveNumber: this.maxMoveNumber,
+        currentMoveNumber: this.currentMoveNumber,
+        completed: this.completed,
+        games: this.games,
+        movedItems: this.movedItems,
+        notFoundMatches: this.notFoundMatches,
+        gameEnded: this.gameEnded,
+        gameEndedWithNoMovesLeft: this.gameEndedWithNoMovesLeft,
+      }"
+      v-bind:reset-not-matches-found="resetNotMatchesFound"
+      v-bind:end-game-with-no-moves-left="endGameWithNoMovesLeft"
+      v-bind:update-move-on-board="updateMoveOnBoard"
+      v-bind:update-game="updateGame"
+    ></BoardComponent>
+    <div>
+      <button v-if="!gameId" @click="fetchInitialBoardGame">
+        Start new game
+      </button>
+      <button v-if="gameId && !gameEnded" @click="endGame">
+        End current game
+      </button>
+    </div>
+    <button @click="logout">Logout</button>
   </div>
-  <button @click="logout">Logout</button>
 </template>
 <script>
 import { GameService } from "@/api/game.service";
 import { RandomGenerator } from "@/model/randomGenerator";
 import * as Board from "@/model/board";
 import BoardComponent from "@/components/Board/BoardComponent.vue";
+import { ref, watch } from "vue";
 
 export default {
   components: { BoardComponent },
@@ -58,11 +61,6 @@ export default {
       gameEnded: false,
       gameEndedWithNoMovesLeft: false,
     };
-  },
-  watch: {
-    token(value) {
-      console.log(value);
-    },
   },
   // methods correponds to the ViewModel in MVVM
   methods: {
@@ -128,24 +126,33 @@ export default {
           this.isFetching = false;
         });
     },
-    updateMoveOnBoard(selectedPosition, newPosition, currentState) {
+    updateMoveOnBoard(selectedPosition, newPosition) {
       this.isFetching = true;
 
       try {
         let resultAfterMove = Board.move(
           RandomGenerator.getInstance(),
-          currentState.board,
-          selectedPosition,
-          newPosition
+          this.board,
+          {
+            row: selectedPosition.row,
+            col: selectedPosition.col,
+          },
+          {
+            row: newPosition.row,
+            col: newPosition.col,
+          }
         );
-        let effectsAfterMove = resultAfterMove.effects;
 
+        let effectsAfterMove = [];
+        if (resultAfterMove) {
+          effectsAfterMove = [...resultAfterMove.effects];
+        }
         this.currentMoveNumber = this.currentMoveNumber + 1;
         if (effectsAfterMove.length > 0) {
           let onlyMatchEffects = effectsAfterMove.filter(
             (effect) => effect.kind === "Match"
           );
-          let newScore = onlyMatchEffects.length * 10 + currentState.score;
+          let newScore = onlyMatchEffects.length * 10 + this.score;
 
           this.board = resultAfterMove.board;
           this.score = newScore;
@@ -188,6 +195,10 @@ export default {
     endGameWithNoMovesLeft() {
       this.gameEndedWithNoMovesLeft = true;
       this.completed = true;
+
+      setTimeout(() => {
+        // nothing to do here;
+      }, 2000);
       GameService.updateGame(this.token, this.gameId, {
         id: -1,
         user: -1,
@@ -201,7 +212,6 @@ export default {
             throw new Error("Network response was not ok");
           }
           this.isFetching = false;
-          this.gameEndedWithNoMovesLeft = false;
           this.score = 0;
           this.currentMoveNumber = 0;
           this.maxMoveNumber = 20;
@@ -243,4 +253,11 @@ export default {
 };
 </script>
 
-<style></style>
+<style scoped>
+.main-view-container {
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+</style>

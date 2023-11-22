@@ -1,23 +1,19 @@
 <template>
   <div class="board-item-container">
     <img
-      :src="require(`../../assets/BoardImages/${image}`)"
+      :src="require(`@/assets/BoardImages/${image}`)"
       :style="{
-        width: '100px',
-        height: '100px',
+        width: '100px', // Set width to 100% to fit the container
+        height: '100px', // Set height to 100% to fit the container
         objectFit: 'contain',
         border: isSelected ? '2px solid yellow' : 'none',
       }"
-      @click="onClick"
     />
   </div>
 </template>
 <script>
 export default {
   props: {
-    // image: string;
-    // isSelected: boolean;
-    // onClick: () => void;
     image: {
       type: String,
       required: true,
@@ -26,13 +22,22 @@ export default {
       type: Boolean,
       required: true,
     },
-    onClick: {
-      type: Function,
-      required: true,
-    },
   },
   setup(props) {
     //
   },
 };
 </script>
+
+<style>
+.board-item-container {
+  border: 1px solid black;
+  margin-bottom: 0.5rem;
+}
+
+.board-item-container:hover {
+  border: 1px solid red;
+  transition: border 0.5s;
+  cursor: pointer;
+}
+</style>
