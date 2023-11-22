@@ -1,6 +1,9 @@
 <template>
-  <div>
-    <router-view v-if="isAuthenticated" />
+  <div v-if="isAuthenticated">
+    <router-view />
+  </div>
+  <div v-else>
+    <router-view name="public" />
   </div>
 </template>
 
@@ -13,12 +16,12 @@ export default {
   },
   beforeRouteEnter(to, from, next) {
     const token = localStorage.getItem("token");
-    if (!token) {
-      next("/login");
-    } else {
+    if (token) {
       next((vm) => {
         vm.isAuthenticated = true;
       });
+    } else {
+      next();
     }
   },
 };
