@@ -75,7 +75,7 @@ export function checkHorizontalMatch<T>(
   let count = 1;
   let left = col - 1;
   let right = col + 1;
-  let horizontalMatches = [p];
+  const horizontalMatches = [p];
 
   while (left >= 0 && board.board[row][left] === piece) {
     count++;
@@ -101,7 +101,7 @@ export function checkVerticalMatch<T>(
   let count = 1;
   let up = row - 1;
   let down = row + 1;
-  let verticalMatches = [p];
+  const verticalMatches = [p];
 
   while (up >= 0 && board.board[up][col] === piece) {
     count++;
@@ -122,10 +122,10 @@ export function constructEffectsForPosition<T>(
   board: Board.Board<T>,
   p: Board.Position
 ): Board.Effect<T>[] {
-  let effects: Board.Effect<T>[] = [];
-  let piece = Board.piece(board, p);
-  let pieceMatchesHorizontally = checkHorizontalMatch(board, p, piece);
-  let pieceMatchesVertically = checkVerticalMatch(board, p, piece);
+  const effects: Board.Effect<T>[] = [];
+  const piece = Board.piece(board, p);
+  const pieceMatchesHorizontally = checkHorizontalMatch(board, p, piece);
+  const pieceMatchesVertically = checkVerticalMatch(board, p, piece);
 
   if (pieceMatchesHorizontally.length >= 3) {
     pieceMatchesHorizontally.sort((a, b) => a.row - b.row);
@@ -164,10 +164,10 @@ export function createBoardWithUndefinedMatched<T>(
   board: Board.Board<T>,
   matchedPositions: Board.Position[]
 ): Board.Board<T> {
-  const newBoard: T[][] = [];
+  const newBoard: (T | undefined)[][] = [];
 
   for (let row = 0; row < board.height; row++) {
-    const newRow: T | undefined[] = [];
+    const newRow: (T | undefined)[] = [];
     for (let col = 0; col < board.width; col++) {
       const currentPosition: Board.Position = { row, col };
       const currentPiece = Board.piece(board, currentPosition);
@@ -179,15 +179,13 @@ export function createBoardWithUndefinedMatched<T>(
       ) {
         newRow.push(undefined);
       } else {
-        // @ts-ignore
         newRow.push(currentPiece);
       }
     }
-    // @ts-ignore
     newBoard.push(newRow);
   }
 
-  return { ...board, board: newBoard };
+  return { ...board, board: newBoard as T[][] };
 }
 
 export function arePositionsEqual(
@@ -202,14 +200,14 @@ export function refillBoard<T>(
   board: Board.Board<T>,
   matchedPositions: Board.Position[]
 ): Board.Board<T> {
-  let boardWithUndefinedMatched = createBoardWithUndefinedMatched(
+  const boardWithUndefinedMatched = createBoardWithUndefinedMatched(
     generator,
     board,
     matchedPositions
   );
 
-  let sortedBoard = sortBoard(boardWithUndefinedMatched);
-  let refilledBoard = regenerateUndefinedTiles(sortedBoard);
+  const sortedBoard = sortBoard(boardWithUndefinedMatched);
+  const refilledBoard = regenerateUndefinedTiles(sortedBoard);
   return refilledBoard;
 }
 
@@ -240,18 +238,16 @@ function sortBoard<T>(board: Board.Board<T>): Board.Board<T> {
 
   return {
     ...board,
-    // @ts-ignore
-    board: sortedArray,
+    board: sortedArray as T[][],
   };
 }
 
 function sortColumns<T>(arr: (T | undefined)[]): (T | undefined)[] {
-  const nullValues: (T | null)[] = [];
+  const nullValues: (T | undefined)[] = [];
   const stringValues: T[] = [];
 
   for (const item of arr) {
     if (item === undefined) {
-      // @ts-ignore
       nullValues.push(undefined);
     } else {
       stringValues.push(item);
@@ -260,19 +256,16 @@ function sortColumns<T>(arr: (T | undefined)[]): (T | undefined)[] {
 
   stringValues.sort((a, b) => arr.indexOf(a) - arr.indexOf(b));
 
-  const sortedArray = nullValues.concat(stringValues);
-
-  // @ts-ignore
-  return sortedArray;
+  return nullValues.concat(stringValues);
 }
 
 export function regenerateUndefinedTiles<T>(
   boardWithUndefined: Board.Board<T>
 ): Board.Board<T> {
-  const regeneratedBoard: T[][] = [];
+  const regeneratedBoard: (T | undefined)[][] = [];
 
   for (let row = 0; row < boardWithUndefined.height; row++) {
-    const newRow: T[] = [];
+    const newRow: (T | undefined)[] = [];
     for (let col = 0; col < boardWithUndefined.width; col++) {
       if (boardWithUndefined.board[row][col] === undefined) {
         newRow.push(boardWithUndefined.generator.next());
