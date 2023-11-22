@@ -1,21 +1,50 @@
+<template>
+  <h1 v-if="gameEndedWithNoMovesLeft">
+    Your game has ended because there were no moves left.
+  </h1>
+  <BoardComponent
+    v-if="gameId"
+    v-bind:game="{
+      isFetching: this.isFetching,
+      gameId: this.gameId,
+      board: this.board,
+      score: this.score,
+      maxMoveNumber: this.maxMoveNumber,
+      currentMoveNumber: this.currentMoveNumber,
+      completed: this.completed,
+      games: this.games,
+      movedItems: this.movedItems,
+      notFoundMatches: this.notFoundMatches,
+      gameEnded: this.gameEnded,
+      gameEndedWithNoMovesLeft: this.gameEndedWithNoMovesLeft,
+    }"
+    v-bind:reset-not-matches-found="resetNotMatchesFound"
+    v-bind:end-game-with-no-moves-left="endGameWithNoMovesLeft"
+    v-bind:update-move-on-board="updateMoveOnBoard"
+    v-bind:update-game="updateGame"
+  ></BoardComponent>
+  <div>
+    <button v-if="!gameId" @click="fetchInitialBoardGame">
+      Start new game
+    </button>
+    <button v-if="gameId && !gameEnded" @click="endGame">
+      End current game
+    </button>
+  </div>
+  <button @click="logout">Logout</button>
+</template>
 <script>
 import { GameService } from "@/api/game.service";
 import { RandomGenerator } from "@/model/randomGenerator";
 import * as Board from "@/model/board";
+import BoardComponent from "@/components/Board/BoardComponent.vue";
 
 export default {
+  components: { BoardComponent },
   // data() corresponds to the Model in MVVM
-  setup() {
-    // Retrieve the token from localStorage
-    const token = JSON.parse(localStorage.getItem("token") || "{}");
-
-    return {
-      token,
-    };
-  },
-
   data() {
     return {
+      token: JSON.parse(localStorage.getItem("token") || "{}"),
       isFetching: false,
       score: 0,
       currentMoveNumber: 0,
@@ -47,7 +76,7 @@ export default {
     updateGame() {
       this.isFetching = true;
       this.movedItems = true;
-      GameService.updateGame(this.token(), this.gameId, {
+      GameService.updateGame(this.token, this.gameId, {
         id: -1,
         user: -1,
         board: this.board,
@@ -74,7 +103,7 @@ export default {
       if (this.gameEndedWithNoMovesLeft) {
         this.gameEndedWithNoMovesLeft = false;
       }
-      GameService.createGame(this.token())
+      GameService.createGame(this.token)
         .then((response) => {
           if (!response.ok) {
             throw new Error("Network response was not ok");
@@ -134,7 +163,7 @@ export default {
       this.completed = true;
       this.isFetching = true;
       this.gameEnded = true;
-      GameService.updateGame(this.token(), this.gameId, {
+      GameService.updateGame(this.token, this.gameId, {
         id: -1,
         user: -1,
         board: this.board,
@@ -159,7 +188,7 @@ export default {
     endGameWithNoMovesLeft() {
       this.gameEndedWithNoMovesLeft = true;
       this.completed = true;
-      GameService.updateGame(this.token(), this.gameId, {
+      GameService.updateGame(this.token, this.gameId, {
         id: -1,
         user: -1,
         board: this.board,
@@ -191,6 +220,21 @@ export default {
     },
     resetNotMatchesFound() {
       this.notFoundMatches = false;
+    },
+    clickWatchToken() {
+      console.log(this.token);
+    },
+    logout() {
+      localStorage.removeItem("token");
+      this.$router.push("/login");
+    },
+    beforeRouteEnter(to, from, next) {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        next("/login");
+      } else {
+        next();
+      }
     },
   },
   beforeMount() {
