@@ -7,40 +7,14 @@
       |
       <router-link to="/login">Login</router-link>
     </nav>
-    <AuthGuard>
-      <router-view />
-    </AuthGuard>
+    <router-view />
   </div>
 </template>
 
 <script>
 import AuthGuard from "@/components/AuthGuard/AuthGuard.vue";
 
-export default {
-  components: {
-    AuthGuard,
-  },
-  routes: [
-    {
-      path: "/",
-      component: AuthGuard,
-      children: [
-        {
-          path: "",
-          component: () => import("@/views/HomeView/HomeView.vue"), // Replace with your actual MainPage component
-        },
-      ],
-    },
-    {
-      path: "/register",
-      component: () => import("@/views/RegisterView/RegisterView.vue"), // Replace with your actual RegisterView component
-    },
-    {
-      path: "/login",
-      component: () => import("@/views/LoginView/LoginView.vue"), // Replace with your actual LoginView component
-    },
-  ],
-};
+export default {};
 </script>
 
 <style>

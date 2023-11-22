@@ -68,7 +68,7 @@ export default {
             return response.json();
           })
           .then((returnLoggedInToken) => {
-            localStorage.setItem("token", returnLoggedInToken);
+            localStorage.setItem("token", JSON.stringify(returnLoggedInToken));
             this.loginSuccess = true;
             this.isFetching = false;
             this.$router.push("/");

@@ -6,12 +6,14 @@ import * as Board from "@/model/board";
 export default {
   // data() corresponds to the Model in MVVM
   setup() {
-    const token = JSON.parse(localStorage.getItem("token"));
+    // Retrieve the token from localStorage
+    const token = JSON.parse(localStorage.getItem("token") || "{}");
 
     return {
       token,
     };
   },
+
   data() {
     return {
       isFetching: false,
@@ -28,7 +30,11 @@ export default {
       gameEndedWithNoMovesLeft: false,
     };
   },
-  watch: {},
+  watch: {
+    token(value) {
+      console.log(value);
+    },
+  },
   // methods correponds to the ViewModel in MVVM
   methods: {
     fetchInitialBoardGame() {
@@ -92,6 +98,99 @@ export default {
           console.error("Error: " + error.message);
           this.isFetching = false;
         });
+    },
+    updateMoveOnBoard(selectedPosition, newPosition, currentState) {
+      this.isFetching = true;
+
+      try {
+        let resultAfterMove = Board.move(
+          RandomGenerator.getInstance(),
+          currentState.board,
+          selectedPosition,
+          newPosition
+        );
+        let effectsAfterMove = resultAfterMove.effects;
+
+        this.currentMoveNumber = this.currentMoveNumber + 1;
+        if (effectsAfterMove.length > 0) {
+          let onlyMatchEffects = effectsAfterMove.filter(
+            (effect) => effect.kind === "Match"
+          );
+          let newScore = onlyMatchEffects.length * 10 + currentState.score;
+
+          this.board = resultAfterMove.board;
+          this.score = newScore;
+          this.completed = false;
+        } else {
+          this.notFoundMatches = true;
+        }
+        this.isFetching = true;
+      } catch (error) {
+        alert("Error: " + error.message);
+        this.isFetching = true;
+      }
+    },
+    endGame() {
+      this.completed = true;
+      this.isFetching = true;
+      this.gameEnded = true;
+      GameService.updateGame(this.token(), this.gameId, {
+        id: -1,
+        user: -1,
+        board: this.board,
+        score: this.score,
+        completed: this.completed,
+        currentMoveNumber: this.currentMoveNumber,
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          this.isFetching = false;
+          this.gameEnded = false;
+        })
+        .catch((error) => {
+          alert("Error: " + error.message);
+          this.isFetching = false;
+          this.gameEnded = false;
+        });
+      this.createNewGame();
+    },
+    endGameWithNoMovesLeft() {
+      this.gameEndedWithNoMovesLeft = true;
+      this.completed = true;
+      GameService.updateGame(this.token(), this.gameId, {
+        id: -1,
+        user: -1,
+        board: this.board,
+        score: this.score,
+        completed: this.completed,
+        currentMoveNumber: this.currentMoveNumber,
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          this.isFetching = false;
+          this.gameEndedWithNoMovesLeft = false;
+          this.score = 0;
+          this.currentMoveNumber = 0;
+          this.maxMoveNumber = 20;
+          this.gameId = undefined;
+          this.completed = false;
+          this.board = undefined;
+          this.games = [];
+          this.movedItems = false;
+          this.notFoundMatches = false;
+          this.gameEnded = false;
+        })
+        .catch((error) => {
+          alert("Error: " + error.message);
+          this.gameEnded = false;
+        });
+    },
+    resetNotMatchesFound() {
+      this.notFoundMatches = false;
     },
   },
   beforeMount() {

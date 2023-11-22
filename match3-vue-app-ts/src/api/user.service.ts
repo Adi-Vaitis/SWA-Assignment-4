@@ -37,7 +37,7 @@ export class UserService {
   static async getUser(token: Token) {
     const apiUrl = new URL(`http://localhost:9090/users/${token.userId}`);
     if (token) {
-      apiUrl.searchParams.append("token", token.token.token);
+      apiUrl.searchParams.append("token", token.token);
     }
 
     const myHeaders = new Headers();
@@ -59,7 +59,7 @@ export class UserService {
     const apiUrl = new URL(`http://localhost:9090/users/${token.userId}`);
 
     if (token) {
-      apiUrl.searchParams.append("token", token.token.token);
+      apiUrl.searchParams.append("token", token.token);
     }
 
     const myHeaders = new Headers();
