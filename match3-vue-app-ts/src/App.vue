@@ -13,8 +13,6 @@
 </template>
 
 <script>
-import AuthGuard from "@/components/AuthGuard/AuthGuard.vue";
-
 export default {
   data() {
     return {
@@ -24,16 +22,21 @@ export default {
   watch: {
     $route(to, from) {
       if (to.query.loggedIn) {
-        this.isAuthenticated = true;
+        this.updateAuthenticationStatus(true);
       } else if (to.query.registered) {
-        this.isAuthenticated = false;
+        this.updateAuthenticationStatus(false);
       }
+    },
+  },
+  methods: {
+    updateAuthenticationStatus(isAuthenticated) {
+      this.isAuthenticated = isAuthenticated;
     },
   },
   beforeMount() {
     const token = localStorage.getItem("token");
     if (token) {
-      this.isAuthenticated = true;
+      this.updateAuthenticationStatus(true);
     }
   },
 };
