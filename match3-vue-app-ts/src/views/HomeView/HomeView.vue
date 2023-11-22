@@ -1,9 +1,18 @@
 <template>
-  <div>HOME</div>
+  <div>
+    <h1>Home</h1>
+  </div>
 </template>
 
-<script lang="ts">
-import { Vue } from "vue-class-component";
-
-export default class HomeView extends Vue {}
+<script>
+export default {
+  beforeRouteEnter(to, from, next) {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      next("/login");
+    } else {
+      next();
+    }
+  },
+};
 </script>

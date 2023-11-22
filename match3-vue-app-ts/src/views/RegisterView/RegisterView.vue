@@ -97,13 +97,18 @@ export default {
           this.secondsRemainedUntilRedirect--;
         } else {
           clearInterval(timer);
-          this.$router.push("/login");
+          this.$router.push({ path: "/login", query: { registered: true } });
         }
       }, 1000);
     },
   },
-  beforeMount() {
-    // something to mount
+  beforeRouteEnter(to, from, next) {
+    const token = localStorage.getItem("token");
+    if (token) {
+      next("/");
+    } else {
+      next();
+    }
   },
 };
 </script>

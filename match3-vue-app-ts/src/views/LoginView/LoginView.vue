@@ -71,7 +71,7 @@ export default {
             localStorage.setItem("token", returnLoggedInToken);
             this.loginSuccess = true;
             this.isFetching = false;
-            this.$router.push("/");
+            this.$router.push({ path: "/", query: { loggedIn: true } });
           })
           .catch((error) => {
             this.loginFailed = true;
@@ -84,8 +84,13 @@ export default {
       }
     },
   },
-  beforeMount() {
-    // something to mount
+  beforeRouteEnter(to, from, next) {
+    const token = localStorage.getItem("token");
+    if (token) {
+      next("/");
+    } else {
+      next();
+    }
   },
 };
 </script>

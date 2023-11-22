@@ -1,15 +1,14 @@
 <template>
   <div>
-    <nav>
+    <nav v-if="isAuthenticated">
       <router-link to="/">Home</router-link>
+    </nav>
+    <nav v-if="!isAuthenticated">
+      <router-link to="/login">Login</router-link>
       |
       <router-link to="/register">Register</router-link>
-      |
-      <router-link to="/login">Login</router-link>
     </nav>
-    <AuthGuard>
-      <router-view />
-    </AuthGuard>
+    <router-view />
   </div>
 </template>
 
@@ -17,29 +16,26 @@
 import AuthGuard from "@/components/AuthGuard/AuthGuard.vue";
 
 export default {
-  components: {
-    AuthGuard,
+  data() {
+    return {
+      isAuthenticated: false,
+    };
   },
-  routes: [
-    {
-      path: "/",
-      component: AuthGuard,
-      children: [
-        {
-          path: "",
-          component: () => import("@/views/HomeView/HomeView.vue"), // Replace with your actual MainPage component
-        },
-      ],
+  watch: {
+    $route(to, from) {
+      if (to.query.loggedIn) {
+        this.isAuthenticated = true;
+      } else if (to.query.registered) {
+        this.isAuthenticated = false;
+      }
     },
-    {
-      path: "/register",
-      component: () => import("@/views/RegisterView/RegisterView.vue"), // Replace with your actual RegisterView component
-    },
-    {
-      path: "/login",
-      component: () => import("@/views/LoginView/LoginView.vue"), // Replace with your actual LoginView component
-    },
-  ],
+  },
+  beforeMount() {
+    const token = localStorage.getItem("token");
+    if (token) {
+      this.isAuthenticated = true;
+    }
+  },
 };
 </script>
 
