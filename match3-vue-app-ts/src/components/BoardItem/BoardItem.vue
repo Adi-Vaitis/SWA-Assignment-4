@@ -3,8 +3,8 @@
     <img
       :src="require(`@/assets/BoardImages/${image}`)"
       :style="{
-        width: '100px', // Set width to 100% to fit the container
-        height: '100px', // Set height to 100% to fit the container
+        width: '100px',
+        height: '100px',
         objectFit: 'contain',
         border: isSelected ? '2px solid yellow' : 'none',
       }"
