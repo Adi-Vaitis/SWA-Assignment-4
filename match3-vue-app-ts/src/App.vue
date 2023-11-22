@@ -8,6 +8,7 @@
       |
       <router-link to="/register">Register</router-link>
     </nav>
+    <notifications group="foo" />
     <router-view />
   </div>
 </template>

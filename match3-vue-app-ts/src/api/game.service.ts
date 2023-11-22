@@ -5,7 +5,7 @@ export class GameService {
   static async getGame(token: Token, gameId: number) {
     const apiUrl = new URL(`http://localhost:9090/games/${gameId}`);
     if (token) {
-      apiUrl.searchParams.append("token", token.token.token);
+      apiUrl.searchParams.append("token", token.token);
     }
 
     const myHeaders = new Headers();
@@ -23,7 +23,7 @@ export class GameService {
   static async getGames(token: Token) {
     const apiUrl = new URL(`http://localhost:9090/games`);
     if (token) {
-      apiUrl.searchParams.append("token", token.token.token);
+      apiUrl.searchParams.append("token", token.token);
     }
 
     const myHeaders = new Headers();
@@ -41,7 +41,7 @@ export class GameService {
   static async createGame(token: Token) {
     const apiUrl = new URL(`http://localhost:9090/games`);
     if (token) {
-      apiUrl.searchParams.append("token", token.token.token);
+      apiUrl.searchParams.append("token", token.token);
     }
 
     const myHeaders = new Headers();
@@ -65,7 +65,7 @@ export class GameService {
 
     const apiUrl = new URL(`http://localhost:9090/games/${gameId}`);
     if (token) {
-      apiUrl.searchParams.append("token", token.token.token);
+      apiUrl.searchParams.append("token", token.token);
     }
 
     const myHeaders = new Headers();

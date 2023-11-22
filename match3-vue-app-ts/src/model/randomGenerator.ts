@@ -12,8 +12,6 @@ export class RandomGenerator implements Generator<string> {
 
   private static instance: RandomGenerator;
 
-  private constructor() {}
-
   public static getInstance(): RandomGenerator {
     if (!RandomGenerator.instance) {
       RandomGenerator.instance = new RandomGenerator();

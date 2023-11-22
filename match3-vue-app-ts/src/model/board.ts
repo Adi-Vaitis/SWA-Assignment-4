@@ -26,7 +26,7 @@ export type Board<T> = {
   generator: Generator<T>;
   width: number;
   height: number;
-  board: T[][];
+  board: (T | undefined)[][];
 };
 
 export type BoardEvent<T> = {
@@ -46,7 +46,7 @@ export type MoveResult<T> = {
 };
 
 export function positions(board: Board<any>): Position[] {
-  let positions: Position[] = [];
+  const positions: Position[] = [];
   for (let row = 0; row < board.height; row++) {
     for (let col = 0; col < board.width; col++) {
       positions.push({ row, col });
@@ -120,10 +120,9 @@ export function move<T>(
   board: Board<T>,
   first: Position,
   second: Position
-  // @ts-ignore
-): MoveResult<T> {
+): MoveResult<T> | undefined {
   if (!canMove(board, first, second)) {
-    return { board, effects: [] };
+    return undefined;
   }
 
   let newBoard = {
@@ -132,15 +131,15 @@ export function move<T>(
   };
 
   const effects: Effect<T>[] = [];
-  let matchesExists = matchesExist(newBoard, first, second);
+  const matchesExists = matchesExist(newBoard, first, second);
   if (matchesExists) {
-    let newEffects: Effect<T>[] = [
+    const newEffects: Effect<T>[] = [
       ...constructEffectsForPosition(newBoard, first),
       ...constructEffectsForPosition(newBoard, second),
     ];
     effects.push(...newEffects);
 
-    let positionsMatched: Position[] = [
+    const positionsMatched: Position[] = [
       ...newEffects
         .filter(
           (effect) => effect.board !== undefined || effect.match !== undefined
@@ -159,8 +158,8 @@ export function move<T>(
       board: refillBoard(generator, newBoard, positionsMatched).board,
     };
     effects.push({ kind: "Refill" });
-    let moveResultBeforeCascading = { board: newBoard, effects: effects };
-    let moveResultAfterCascading = handleCascadingMatches(
+    const moveResultBeforeCascading = { board: newBoard, effects: effects };
+    const moveResultAfterCascading = handleCascadingMatches(
       moveResultBeforeCascading
     );
     return {
@@ -177,14 +176,14 @@ function handleCascadingMatches<T>(moveResult: MoveResult<T>): MoveResult<T> {
     hasCascadingMatches = false;
 
     for (let row = 0; row < moveResult.board.height; row++) {
-      let rowMatch = checkHorizontalMatch(
+      const rowMatch = checkHorizontalMatch(
         moveResult.board,
         { row: row, col: 0 },
         piece(moveResult.board, { row: row, col: 0 })
       );
 
       if (rowMatch.length >= 3) {
-        let pieceMatched = piece(moveResult.board, rowMatch[0]);
+        const pieceMatched = piece(moveResult.board, rowMatch[0]);
         moveResult = {
           ...moveResult,
           effects: [
@@ -214,13 +213,13 @@ function handleCascadingMatches<T>(moveResult: MoveResult<T>): MoveResult<T> {
         hasCascadingMatches = true;
       } else {
         for (let col = 0; col < moveResult.board.width; col++) {
-          let colMatch = checkVerticalMatch(
+          const colMatch = checkVerticalMatch(
             moveResult.board,
             { row: 0, col: col },
             piece(moveResult.board, { row: 0, col: col })
           );
           if (colMatch.length >= 3) {
-            let pieceMatched = piece(moveResult.board, colMatch[0]);
+            const pieceMatched = piece(moveResult.board, colMatch[0]);
             moveResult = {
               ...moveResult,
               effects: [
