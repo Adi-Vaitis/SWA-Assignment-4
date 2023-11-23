@@ -95,30 +95,25 @@ export default {
       }
     );
     watch(
-      [() => props.game.movedItems, () => props.game.score],
-      ([newMovedItems, newScore], [oldMovedItems, oldScore]) => {
-        if (
-          newMovedItems &&
-          newScore !== 0 &&
-          (newMovedItems !== oldMovedItems || newScore !== oldScore)
-        ) {
+      () => props.game.movedItems,
+      (newValue, oldValue) => {
+        if (newValue) {
           openNotification(
             "success",
-            "Found match! Items moved! Current score: " + newScore
+            `Found match! Items moved! Current score: ${props.game.score}`
           );
         }
       }
-    );
-
-    watch(
-      () => props.game.notFoundMatches,
-      (newValue, oldValue) => {
-        if (newValue) {
-          openNotification("error", "No matches found! Try again!");
-          props.resetNotMatchesFound();
+    ),
+      watch(
+        () => props.game.notFoundMatches,
+        (newValue, oldValue) => {
+          if (newValue) {
+            openNotification("error", "No matches found! Try again!");
+            props.resetNotMatchesFound();
+          }
         }
-      }
-    );
+      );
 
     let leftMoves = ref(
       props.game.maxMoveNumber - props.game.currentMoveNumber
@@ -149,9 +144,9 @@ export default {
     watch(
       () => props.game.score,
       (newValue, oldValue) => {
-        beforeScore.value = oldValue;
         gameObj = props.game;
         nowScore.value = newValue;
+        props.updateGame();
       }
     );
 
@@ -197,10 +192,6 @@ export default {
           col: -1,
         };
         this.positionToMoveAlreadySelected = false;
-      }
-
-      if (this.beforeScore.value !== this.nowScore.value) {
-        this.updateGame();
       }
     },
     handleBoardItemClick(rowIndex, colIndex) {

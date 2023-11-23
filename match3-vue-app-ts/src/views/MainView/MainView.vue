@@ -73,7 +73,7 @@ export default {
     },
     updateGame() {
       this.isFetching = true;
-      this.movedItems = true;
+      this.movedItems = false;
       GameService.updateGame(this.token, this.gameId, {
         id: -1,
         user: -1,
@@ -87,12 +87,10 @@ export default {
             throw new Error("Network response was not ok");
           }
           this.isFetching = false;
-          this.movedItems = false;
         })
         .catch((error) => {
           alert("Error: " + error.message);
           this.isFetching = false;
-          this.movedItems = false;
         });
     },
     createNewGame() {
@@ -128,7 +126,6 @@ export default {
     },
     updateMoveOnBoard(selectedPosition, newPosition) {
       this.isFetching = true;
-
       try {
         let resultAfterMove = Board.move(
           RandomGenerator.getInstance(),
@@ -157,6 +154,7 @@ export default {
           this.board = resultAfterMove.board;
           this.score = newScore;
           this.completed = false;
+          this.movedItems = true;
         } else {
           this.notFoundMatches = true;
         }
