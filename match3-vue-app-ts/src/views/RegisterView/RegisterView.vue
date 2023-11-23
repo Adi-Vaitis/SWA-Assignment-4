@@ -10,7 +10,10 @@
         placeholder="Username"
         v-model="username"
       />
-      <p class="danger-message" v-if="!usernameIsValid && !registerSuccess">
+      <p
+        class="danger-message"
+        v-if="!usernameIsValid && (registerFailed || username)"
+      >
         Please enter a valid username (Minimum 3 characters)
       </p>
       <label for="password">Password</label>
@@ -20,7 +23,10 @@
         placeholder="Password"
         v-model="password"
       />
-      <p class="danger-message" v-if="!passwordIsVaid && !registerSuccess">
+      <p
+        class="danger-message"
+        v-if="!passwordIsVaid && (registerFailed || password)"
+      >
         Please enter a valid password (Minimum 3 characters)
       </p>
       <button v-if="passwordIsVaid && usernameIsValid" type="submit">
@@ -30,7 +36,10 @@
     </form>
     <p v-if="registerSuccess" class="success-message">
       You have registered! Press
-      <span><a href="/login"> redirect </a> to go to login page.</span>
+      <span
+        ><router-link to="/login"> redirect </router-link> to go to login
+        page.</span
+      >
       <br />
       Otherwise you will be directed in
       {{ secondsRemainedUntilRedirect }} seconds.

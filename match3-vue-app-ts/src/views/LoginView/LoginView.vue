@@ -10,9 +10,6 @@
         placeholder="Username"
         v-model="username"
       />
-      <p class="danger-message" v-if="!usernameIsValid && !loginSuccess">
-        Your username or your password is incorrect
-      </p>
       <label for="password">Password</label>
       <input
         id="password"
@@ -20,16 +17,19 @@
         placeholder="Password"
         v-model="password"
       />
-      <p class="danger-message" v-if="!passwordIsValid && !loginSuccess">
-        Your username or your password is incorrect
+      <p class="danger-message" v-if="loginFailed">
+        Your username or password is incorrect
       </p>
-      <button v-if="passwordIsValid && usernameIsValid" type="submit">
+      <button
+        type="submit"
+        :disabled="isFetching || !(passwordIsValid && usernameIsValid)"
+      >
         Login
       </button>
-      <button v-else type="submit" disabled>Login</button>
     </form>
   </div>
 </template>
+
 <script>
 import { UserService } from "@/api/user.service";
 
@@ -47,10 +47,10 @@ export default {
   },
   watch: {
     username(value) {
-      this.usernameIsValid = value.length > 3;
+      this.usernameIsValid = value.length > 0;
     },
     password(value) {
-      this.passwordIsValid = value.length > 3;
+      this.passwordIsValid = value.length > 0;
     },
   },
   methods: {
