@@ -2,6 +2,7 @@ import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import RegisterView from "@/views/RegisterView/RegisterView.vue";
 import LoginView from "@/views/LoginView/LoginView.vue";
 import MainView from "@/views/MainView/MainView.vue";
+import HighScoreView from "@/views/HighScoreView/HighScoreView.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -26,6 +27,14 @@ const routes: Array<RouteRecordRaw> = [
     component: LoginView,
     meta: {
       title: "Login",
+    },
+  },
+  {
+    path: "/highScore",
+    name: "HighScore",
+    component: HighScoreView,
+    meta: {
+      title: "HighScore",
     },
   },
   // {

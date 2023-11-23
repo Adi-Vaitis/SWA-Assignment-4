@@ -2,6 +2,8 @@
   <div>
     <nav v-if="isAuthenticated">
       <router-link to="/">Home</router-link>
+      |
+      <router-link to="/highScore">High Score</router-link>
     </nav>
     <nav v-if="!isAuthenticated">
       <router-link to="/login">Login</router-link>
