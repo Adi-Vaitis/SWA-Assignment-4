@@ -52,10 +52,7 @@ export class UserService {
     return fetch(apiUrl.toString(), requestOptions);
   }
 
-  static async updateUserProfile(
-    token: Token,
-    profileUpdates: { password?: string }
-  ) {
+  static async updateUserProfile(token: Token, profileUpdates: User) {
     const apiUrl = new URL(`http://localhost:9090/users/${token.userId}`);
 
     if (token) {
@@ -65,9 +62,7 @@ export class UserService {
     const myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
 
-    const requestBody = JSON.stringify({
-      password: profileUpdates.password,
-    });
+    const requestBody = JSON.stringify(profileUpdates);
 
     const requestOptions = {
       method: "PATCH",

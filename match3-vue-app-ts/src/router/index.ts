@@ -3,6 +3,7 @@ import RegisterView from "@/views/RegisterView/RegisterView.vue";
 import LoginView from "@/views/LoginView/LoginView.vue";
 import MainView from "@/views/MainView/MainView.vue";
 import HighScoreView from "@/views/HighScoreView/HighScoreView.vue";
+import ProfileView from "@/views/ProfileView/ProfileView.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -35,6 +36,14 @@ const routes: Array<RouteRecordRaw> = [
     component: HighScoreView,
     meta: {
       title: "HighScore",
+    },
+  },
+  {
+    path: "/profile",
+    name: "Profile",
+    component: ProfileView,
+    meta: {
+      title: "Profile",
     },
   },
   // {
