@@ -43,6 +43,14 @@ import BoardComponent from "@/components/Board/BoardComponent.vue";
 import { ref, watch } from "vue";
 
 export default {
+  beforeRouteEnter(to, from, next) {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      next("/login");
+    } else {
+      next();
+    }
+  },
   components: { BoardComponent },
   // data() corresponds to the Model in MVVM
   data() {
@@ -236,17 +244,6 @@ export default {
       localStorage.removeItem("token");
       this.$router.push("/login");
     },
-    beforeRouteEnter(to, from, next) {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        next("/login");
-      } else {
-        next();
-      }
-    },
-  },
-  beforeMount() {
-    // something to mount
   },
 };
 </script>
