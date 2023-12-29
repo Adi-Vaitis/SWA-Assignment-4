@@ -243,6 +243,7 @@ export default {
     logout() {
       localStorage.removeItem("token");
       this.$router.push("/login");
+      window.location.reload();
     },
   },
 };
